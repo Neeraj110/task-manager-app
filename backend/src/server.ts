@@ -38,6 +38,9 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
 
+app.get("/", (req, res) => {
+  res.send("✅ Task Manager API is running");
+});
 // 404 Handler - must be after all routes
 app.use(notFoundHandler);
 
