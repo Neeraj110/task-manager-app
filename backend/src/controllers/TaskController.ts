@@ -7,6 +7,7 @@ import {
   handleTaskUpdated,
   handleTaskDeleted,
 } from "../utils/socketEmitters";
+import Activity from "../models/Activity";
 
 export class TaskController {
   private taskService: TaskService;
@@ -113,6 +114,16 @@ export class TaskController {
 
       const task = await this.taskService.updateTask(id, data, userId);
 
+      // Create audit log for task update
+      await Activity.create({
+        user: userId,
+        action: "Updated Task",
+        task: id,
+        details: data.status
+          ? `Updated task details and status to '${data.status}'`
+          : "Updated task details",
+      });
+
       await handleTaskUpdated(task, previousAssignee, {
         id: req.user!._id.toString(),
         name: req.user!.name,
@@ -148,6 +159,14 @@ export class TaskController {
         status as TaskStatus,
         userId
       );
+
+      // Create audit log for status update
+      await Activity.create({
+        user: userId,
+        action: "Updated Task Status",
+        task: id,
+        details: `Changed status to '${status}'`,
+      });
 
       await handleTaskUpdated(task, previousAssignee, {
         id: req.user!._id.toString(),
