@@ -20,7 +20,7 @@ export const generateToken = (userId: Types.ObjectId): string => {
     : JWT_EXPIRES_IN;
 
   const options: SignOptions = {
-    expiresIn: expiresIn,
+    expiresIn: expiresIn as SignOptions["expiresIn"],
   };
 
   return jwt.sign({ _id: userId.toString() }, JWT_SECRET, options);
